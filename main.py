@@ -1,12 +1,14 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+from fastapi import HTTPException
+
 
 class UserCreate(BaseModel):
     name: str
     email: str | None = None
     city: str | None = None
 
-    class Config:
+    model_config = ConfigDict(
         json_schema_extra = {
             "example": {
                 "name" : "Alex",
@@ -14,12 +16,13 @@ class UserCreate(BaseModel):
                 "city" : "Russia"
             }
         }
+    )
 class UserUpdate(BaseModel):
     name: str
     email: str | None = None
     city: str | None = None
 
-    class Config:
+    model_config = ConfigDict(
         json_schema_extra = {
             "example": {
                 "name" : "Alex",
@@ -27,6 +30,7 @@ class UserUpdate(BaseModel):
                 "city" : "Russia"
             }
         }
+    )
 
 app = FastAPI()
 
