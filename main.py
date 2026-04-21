@@ -46,10 +46,11 @@ def create_user(user: UserCreate):
 
     new_user = {
         'name': name,
-        'email': 'Unknown',
-        'city': 'Unknown',
-        'status': 'draft'
+        'email': user.email,
+        'city': user.city,
     }
+
+    new_user['status'] = set_status(new_user)
     data_base.append(new_user)
     return {'status': 'success', 'message': 'User created successfully'}
 
@@ -62,10 +63,7 @@ def update_user(user: UserUpdate):
                 item['email'] = user.email
             if user.city:
                 item['city'] = user.city
-            if item['name'] and item['email'] != "Unknown" and item['city'] != 'Unknown':
-                item['status'] = 'complete'
-            elif item ['name'] and item['email'] != "Unknown" and item['city'] == 'Unknown':
-                item['status'] = 'in_progress'
+            item['status'] = set_status(item)
             return {'status': 'success', 'message': 'User updated successfully'}
     return {'status': 'error', 'code': '400', 'message': 'User does not exist'}
 
@@ -73,3 +71,10 @@ def update_user(user: UserUpdate):
 def get_users():
     return data_base
 
+def set_status(user: dict):
+    if user['name'] and user['email'] and user['city']:
+        return 'complete'
+    elif user['name'] and (user['email'] is None or user['city'] is None):
+        return 'in_progress'
+    else:
+        return 'draft'
